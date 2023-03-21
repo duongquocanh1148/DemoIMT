@@ -38,11 +38,11 @@ public class AuthenticateService {
     public ResponseObject authenticate(AuthenticateRequest request){
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
+                        request.getUserName(),
                         request.getPassword()
                 )
         );
-        var user = userRepository.findByEmail(request.getEmail())
+        var user = userRepository.findByUserName(request.getUserName())
                 .orElseThrow();
         var jwt = jwtService.generateToken(user);
         saveUserToken(user, jwt);
@@ -70,5 +70,21 @@ public class AuthenticateService {
             token.setRevoked(true);
         });
         tokenRepository.saveAll(validUserTokens);
+    }
+    
+    public ResponseObject forget(Forget request){
+//        authenticationManager.authenticate(
+//                new UsernamePasswordAuthenticationToken(
+//                        request.getEmail(),
+//                        request.getPassword()
+//                )
+//        );
+        var user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow();
+        var jwt = jwtService.generateToken(user);
+        saveUserToken(user, jwt);
+        return ResponseObject.builder()
+                .data(jwt)
+                .build();
     }
 }

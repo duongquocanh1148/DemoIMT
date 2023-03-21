@@ -1,9 +1,10 @@
-
+server:
+  port: 8888
 spring:
     datasource:
-        url: jdbc:postgresql://localhost:5433/DemoIMT
+        url: jdbc:postgresql://localhost:5432/DemoIMT
         username: postgres
-        password: 1148
+        password: 3042001vy
         driver-class-name: org.postgresql.Driver
     jpa:
         hibernate:

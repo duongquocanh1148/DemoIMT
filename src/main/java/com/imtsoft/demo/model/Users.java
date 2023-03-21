@@ -25,7 +25,7 @@ public class Users implements UserDetails {
    String userName;
    String password;
    String email;
-   Date doB;
+   String doB;
 
    @Override
    public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -35,7 +35,7 @@ public class Users implements UserDetails {
 
    @Override
    public String getUsername() {
-      return email;
+      return userName;
    }
    @Override
    public String getPassword() {
