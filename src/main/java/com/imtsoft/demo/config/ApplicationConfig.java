@@ -1,6 +1,7 @@
 package com.imtsoft.demo.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,6 +18,7 @@ import com.imtsoft.demo.repositories.UserRepository;
 @RequiredArgsConstructor
 public class ApplicationConfig {
 
+    @Autowired
     private final UserRepository userRepository;
     @Bean
     public UserDetailsService userDetailsService(){

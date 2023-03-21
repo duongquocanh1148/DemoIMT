@@ -24,13 +24,13 @@ public class AuthenticateService {
     private final AuthenticationManager authenticationManager;
     public ResponseObject register(Register request){
 
-        var user = Users.builder()
-                .userName(request.getUserName())
-                .password(request.getPassword())
-                .email(request.getEmail())
-                .doB(request.getDoB())
-                .build();
-        if(validateEmail(user.getEmail()) && validateUserName(user.getUsername()) && validatePassword(user.getPassword())){
+        if(validateEmail(request.getEmail()) && validateUserName(request.getUserName()) && validatePassword(request.getPassword())){
+            var user = Users.builder()
+                    .userName(request.getUserName())
+                    .password(passwordEncoder.encode(request.getPassword()))
+                    .email(request.getEmail())
+                    .doB(request.getDoB())
+                    .build();
             userRepository.save(user);
             var jwt = jwtService.generateToken(user);
             return ResponseObject.builder()
@@ -42,7 +42,7 @@ public class AuthenticateService {
         return ResponseObject.builder()
                 .status("Failed")
                 .message("Please check your information input!")
-                .data(user).build();
+                .build();
         }
     boolean validateEmail(String value) {
         String regexPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
