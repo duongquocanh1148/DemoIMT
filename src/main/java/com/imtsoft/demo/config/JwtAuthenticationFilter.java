@@ -1,4 +1,4 @@
-package config;
+package com.imtsoft.demo.config;
 
 
 import jakarta.servlet.FilterChain;
@@ -14,8 +14,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-import repositories.TokenRepository;
-import service.JwtService;
+import com.imtsoft.demo.repositories.TokenRepository;
+import com.imtsoft.demo.service.JwtService;
 
 import java.io.IOException;
 

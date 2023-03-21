@@ -1,4 +1,4 @@
-package service;
+package com.imtsoft.demo.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

@@ -1,0 +1,19 @@
+
+spring:
+    datasource:
+        url: jdbc:postgresql://localhost:5433/DemoIMT
+        username: postgres
+        password: 1148
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        hibernate:
+            ddl-auto: update
+        show-sql: true
+        properties:
+            hibernate:
+                globally_quoted_identifiers: true
+                format_sql: true
+                naming:
+                    physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        database: postgresql
+        database-platform: org.hibernate.dialect.PostgreSQLDialect

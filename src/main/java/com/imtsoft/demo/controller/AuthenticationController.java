@@ -1,16 +1,16 @@
-package controller;
+package com.imtsoft.demo.controller;
 
 
-import model.AuthenticateRequest;
-import model.Register;
-import model.ResponseObject;
+import com.imtsoft.demo.model.AuthenticateRequest;
+import com.imtsoft.demo.model.Register;
+import com.imtsoft.demo.model.ResponseObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import service.AuthenticateService;
+import com.imtsoft.demo.service.AuthenticateService;
 
 @RestController
 @RequestMapping("/api/v1/auth")

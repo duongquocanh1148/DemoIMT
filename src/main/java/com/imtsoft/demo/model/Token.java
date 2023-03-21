@@ -1,4 +1,4 @@
-package model;
+package com.imtsoft.demo.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ public class Token {
     @Column(unique = true)
     public String token;
 
-    @Enumerated(EnumType.STRING)
+
     public String tokenType = "BEARER";
 
     public boolean revoked;

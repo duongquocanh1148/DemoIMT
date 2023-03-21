@@ -1,4 +1,4 @@
-package model;
+package com.imtsoft.demo.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
