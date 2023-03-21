@@ -10,6 +10,13 @@ import org.springframework.stereotype.Service;
 import com.imtsoft.demo.repositories.TokenRepository;
 import com.imtsoft.demo.repositories.UserRepository;
 
+import javax.mail.*;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
+import java.util.Date;
+import java.util.Optional;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,9 +27,11 @@ public class AuthenticateService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final TokenRepository tokenRepository;
+    private final GmailService gmailService;
 
+    private String jwt;
     private final AuthenticationManager authenticationManager;
-    public ResponseObject register(Register request){
+    public ResponseObject register(Register request) throws MessagingException, UnsupportedEncodingException {
 
         if(validateEmail(request.getEmail()) && validateUserName(request.getUserName()) && validatePassword(request.getPassword())){
             var user = Users.builder()
@@ -30,9 +39,11 @@ public class AuthenticateService {
                     .password(passwordEncoder.encode(request.getPassword()))
                     .email(request.getEmail())
                     .doB(request.getDoB())
+                    .isConfirm(false)
                     .build();
             userRepository.save(user);
-            var jwt = jwtService.generateToken(user);
+            jwt = jwtService.generateToken(user);
+            gmailService.SendMail(user.getEmail(), jwt);
             return ResponseObject.builder()
                     .status("OK")
                     .message("token: " + jwt)
@@ -44,6 +55,24 @@ public class AuthenticateService {
                 .message("Please check your information input!")
                 .build();
         }
+    public ResponseObject confirmEmail(String token, Integer id){
+        if(token.equals(jwt)){
+            Optional<Users> update = userRepository.findById(id).map(users -> {
+                users.setConfirm(true);
+                return userRepository.save(users);
+            });
+            return ResponseObject.builder()
+                    .status("OK")
+                    .message("Confirm successfully")
+                    .build();
+        }
+        return ResponseObject.builder()
+                .status("Failed")
+                .message("Please check your token again!")
+                .build();
+    }
+
+
     boolean validateEmail(String value) {
         String regexPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
                 + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
@@ -115,4 +144,6 @@ public class AuthenticateService {
                 .data(jwt)
                 .build();
     }
+
+
 }
