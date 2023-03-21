@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import com.imtsoft.demo.repositories.TokenRepository;
 import com.imtsoft.demo.repositories.UserRepository;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticateService {
@@ -20,21 +23,46 @@ public class AuthenticateService {
 
     private final AuthenticationManager authenticationManager;
     public ResponseObject register(Register request){
+
         var user = Users.builder()
                 .userName(request.getUserName())
-                .password((passwordEncoder.encode(request.getPassword())))
+                .password(request.getPassword())
                 .email(request.getEmail())
                 .doB(request.getDoB())
                 .build();
-        userRepository.save(user);
-        var jwt = jwtService.generateToken(user);
+        if(validateEmail(user.getEmail()) && validateUserName(user.getUsername()) && validatePassword(user.getPassword())){
+            userRepository.save(user);
+            var jwt = jwtService.generateToken(user);
+            return ResponseObject.builder()
+                    .status("OK")
+                    .message("token: " + jwt)
+                    .data(user)
+                    .build();
+        }
         return ResponseObject.builder()
-                .status("OK")
-                .message("token: " + jwt)
-                .data(user)
-                .build();
+                .status("Failed")
+                .message("Please check your information input!")
+                .data(user).build();
+        }
+    boolean validateEmail(String value) {
+        String regexPattern = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
+                + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$";
+        Pattern pattern = Pattern.compile(regexPattern);
+        Matcher matcher = pattern.matcher(value);
+        return matcher.matches();
     }
-
+    boolean validateUserName(String value){
+        String regexPattern = "^[a-z0-9].{8,32}$";
+        Pattern pattern = Pattern.compile(regexPattern);
+        Matcher matcher = pattern.matcher(value);
+        return matcher.matches();
+    }
+    boolean validatePassword(String value){
+        String regexPattern = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!.#$@_+,?-]).{8,32}$";
+        Pattern pattern = Pattern.compile(regexPattern);
+        Matcher matcher = pattern.matcher(value);
+        return matcher.matches();
+    }
     public ResponseObject authenticate(AuthenticateRequest request){
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
