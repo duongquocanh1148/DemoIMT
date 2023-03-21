@@ -8,16 +8,15 @@ import com.imtsoft.demo.model.ResponseObject;
 import com.imtsoft.demo.model.Users;
 import com.imtsoft.demo.repositories.UserRepository;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.imtsoft.demo.service.AuthenticateService;
+
+import javax.mail.MessagingException;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -34,7 +33,7 @@ public class AuthenticationController {
     @PostMapping("/register")
     public ResponseEntity<ResponseObject> register(
         @RequestBody Register request
-    ) {
+    ) throws MessagingException, UnsupportedEncodingException {
         return ResponseEntity.ok(authenticateService.register(request));
     }
     @PostMapping("/authenticate")
@@ -49,6 +48,12 @@ public class AuthenticationController {
             @RequestBody Forget request
     ) {
         return ResponseEntity.ok(authenticateService.forget(request));
+    }
+    @PostMapping("/confirm/{id}")
+    public ResponseEntity<ResponseObject> confirmEmail(
+            @RequestBody String token, @PathVariable Integer id
+    ) {
+        return ResponseEntity.ok(authenticateService.confirmEmail(token, id));
     }
 //    @GetMapping("/test")
 //    public Optional<Users> getUser(Users users) {

@@ -26,6 +26,8 @@ public class Users implements UserDetails {
    String password;
    String email;
    String doB;
+   boolean isConfirm;
+
 
    @Override
    public Collection<? extends GrantedAuthority> getAuthorities() {
