@@ -1,14 +1,14 @@
-package service;
+package com.imtsoft.demo.service;
 
 
+import com.imtsoft.demo.model.*;
 import lombok.RequiredArgsConstructor;
-import model.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import repositories.TokenRepository;
-import repositories.UserRepository;
+import com.imtsoft.demo.repositories.TokenRepository;
+import com.imtsoft.demo.repositories.UserRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +29,8 @@ public class AuthenticateService {
         userRepository.save(user);
         var jwt = jwtService.generateToken(user);
         return ResponseObject.builder()
+                .status("")
+                .message("")
                 .data(jwt)
                 .build();
     }
