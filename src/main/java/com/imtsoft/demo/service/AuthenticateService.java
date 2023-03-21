@@ -29,9 +29,9 @@ public class AuthenticateService {
         userRepository.save(user);
         var jwt = jwtService.generateToken(user);
         return ResponseObject.builder()
-                .status("")
-                .message("")
-                .data(jwt)
+                .status("OK")
+                .message("token: " + jwt)
+                .data(user)
                 .build();
     }
 

@@ -15,5 +15,5 @@ public class Register {
     private String userName;
     private String email;
     private String password;
-    private Date doB;
+    private String doB;
 }
