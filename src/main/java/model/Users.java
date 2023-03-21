@@ -2,6 +2,7 @@ package model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,6 +12,7 @@ import java.util.Collection;
 import java.util.Date;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -18,7 +20,7 @@ import java.util.Date;
 public class Users implements UserDetails {
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
-   String id;
+   Integer id;
    String userName;
    String password;
    String email;
@@ -33,7 +35,10 @@ public class Users implements UserDetails {
    public String getUsername() {
       return email;
    }
-
+   @Override
+   public String getPassword() {
+      return password;
+   }
    @Override
    public boolean isAccountNonExpired() {
       return true;
