@@ -4,6 +4,7 @@ package com.imtsoft.demo.controller;
 import com.imtsoft.demo.model.AuthenticateRequest;
 import com.imtsoft.demo.model.Forget;
 import com.imtsoft.demo.model.Register;
+import com.imtsoft.demo.model.ResetPassword;
 import com.imtsoft.demo.model.ResponseObject;
 import com.imtsoft.demo.model.Users;
 import com.imtsoft.demo.repositories.UserRepository;
@@ -36,17 +37,17 @@ public class AuthenticationController {
     ) throws MessagingException, UnsupportedEncodingException {
         return ResponseEntity.ok(authenticateService.register(request));
     }
-    @PostMapping("/authenticate")
+    @PostMapping("/login")
     public ResponseEntity<ResponseObject> authenticate(
             @RequestBody AuthenticateRequest request
     ) {
         return ResponseEntity.ok(authenticateService.authenticate(request));
     }
     
-    @PostMapping("/authenticate/forget")
+    @PostMapping("/forget")
     public ResponseEntity<ResponseObject> forgetPass(
             @RequestBody Forget request
-    ) {
+    ) throws UnsupportedEncodingException, MessagingException {
         return ResponseEntity.ok(authenticateService.forget(request));
     }
     @PostMapping("/confirm/{id}")
@@ -54,6 +55,13 @@ public class AuthenticationController {
             @RequestBody String token, @PathVariable Integer id
     ) {
         return ResponseEntity.ok(authenticateService.confirmEmail(token, id));
+    }
+    
+    @PostMapping("/reset/{email}")
+    public ResponseEntity<ResponseObject> resetPassWord(
+            @RequestBody ResetPassword request, @PathVariable String email
+    ) {
+        return ResponseEntity.ok(authenticateService.checkTokenSendToEmail(request, email));
     }
 //    @GetMapping("/test")
 //    public Optional<Users> getUser(Users users) {
