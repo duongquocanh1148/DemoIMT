@@ -3,6 +3,8 @@ package com.imtsoft.demo.service;
 
 import com.imtsoft.demo.model.*;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -23,10 +25,14 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 public class AuthenticateService {
+	
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+   
     private final JwtService jwtService;
+    
     private final TokenRepository tokenRepository;
+    
     private final GmailService gmailService;
 
     private String jwt;
@@ -99,13 +105,23 @@ public class AuthenticateService {
                         request.getPassword()
                 )
         );
-        var user = userRepository.findByUserName(request.getUserName())
-                .orElseThrow();
-        var jwt = jwtService.generateToken(user);
-        saveUserToken(user, jwt);
-        return ResponseObject.builder()
-                .data(jwt)
-                .build();
+       Users user = userRepository.findByUserName(request.getUserName())
+                .orElse(null);
+       if (user!=null) {
+    	   jwt = jwtService.generateToken(user);
+           saveUserToken(user, jwt);
+           return ResponseObject.builder()
+           		.status("OK")
+           		.message("Login successfully")
+                   .data(jwt)
+                   .build();
+	} else {
+		return ResponseObject.builder()
+           		.status("Failed")
+           		.message("Login fail")
+                   .build();
+	}
+        
     }
 
     private void saveUserToken(Users user, String jwtToken) {
@@ -129,19 +145,48 @@ public class AuthenticateService {
         tokenRepository.saveAll(validUserTokens);
     }
     
-    public ResponseObject forget(Forget request){
+    public ResponseObject forget(Forget request) throws UnsupportedEncodingException, MessagingException{
 //        authenticationManager.authenticate(
 //                new UsernamePasswordAuthenticationToken(
 //                        request.getEmail(),
-//                        request.getPassword()
+//                        null
 //                )
 //        );
-        var user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow();
-        var jwt = jwtService.generateToken(user);
-        saveUserToken(user, jwt);
+        Users  user = userRepository.findByEmail(request.getEmail())
+                .orElse(null);
+        if (user!=null) {
+        	jwt = jwtService.generateToken(user);
+            saveUserToken(user, jwt);
+            gmailService.SendMail(user.getEmail(), jwt);
+            return ResponseObject.builder()
+            		.status("OK")
+            		.message("please check your email to get token")
+                    .data(jwt)
+                    .build();
+		}
+        else {
+        	return ResponseObject.builder()
+        			.status("Failed")
+                    .message("Please check your email again!")
+                    .build();
+		}
+    }
+    
+    public ResponseObject checkTokenSendToEmail(ResetPassword resetPassword,String email){
+        if(resetPassword.getToken().equals(jwt)){
+            Optional<Users> update = userRepository.findByEmail(email).map(users -> {
+                users.setPassword(passwordEncoder.encode(resetPassword.getPassword()));
+                return userRepository.save(users);
+            });
+        	
+            return ResponseObject.builder()
+                    .status("OK")
+                    .message("Change password successfully")
+                    .build();
+        }
         return ResponseObject.builder()
-                .data(jwt)
+                .status("Failed")
+                .message("Please check your token again!")
                 .build();
     }
 
